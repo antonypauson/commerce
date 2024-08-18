@@ -1,0 +1,30 @@
+{% extends "auctions/layout.html" %}
+
+{% block body %}
+    <h2>Active Listings</h2>
+    {% if listings %}
+        <ul>
+            {% for listing in listings %}
+                <li>
+                    <a href="{% url 'listing_detail' listing_id=listing.id %}"><h3>{{ listing.title }}</h3></a>
+                    <p>{{ listing.description }}</p>
+                    <p>Current Price: ₹{{ listing.starting_bid }}</p>
+                    {% if listing.image_url %}
+                        <img src="{{ listing.image_url }}" alt="{{ listing.title }}" style="max-width: 300px;">
+                    {% endif %}
+
+                    {% if listing.is_active %}
+                        <p style="color: green;">Status: OPEN</p>
+                    {% else %}
+                        <p style="color: red;">Status: CLOSED</p>
+                        <p>Item Won by: <strong>{{ listing.winner.username }}</strong></p>
+                    {% endif %}
+                    <!-- <p>Category:{{ listing.category }}</p>
+                    <p>Posted by: {{ listing.created_by.username }}</p> -->
+                </li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p>No active listings available</p>
+    {% endif %}
+{% endblock %}

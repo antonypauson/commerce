@@ -1,0 +1,100 @@
+{% extends "auctions/layout.html" %}
+
+{% block body %}
+<div class="container">
+    <h2>{{ listing.title }}</h2>
+    <p>{{ listing.description }}</p>
+    <p>Starting Bid: ₹{{ listing.starting_bid }}</p>
+    {% if listing.image_url %}
+    <div class="listing-detail">
+        <img src="{{ listing.image_url }}" alt="{{ listing.title }}">
+    </div>
+        
+    {% endif %}
+    <p>Posted By: {{ listing.created_by.username }}</p>
+    <p>Category: {{ listing.category }}</p>
+
+    {% if user.is_authenticated %}
+        <!-- Watchlist stuff -->
+        {% if is_in_watchlist %}
+            <a href="{% url 'remove_from_watchlist' listing.id %}" class="btn btn-danger">Remove from Watchlist</a>
+        {% else %}
+            <a href="{% url 'add_to_watchlist' listing.id %}" class="btn btn-primary">Add to Watchlist</a>
+        {% endif %}
+
+        <!-- Bid Stuff -->
+        {% if listing.is_active %}
+            <form action="{% url 'bid_on_listing' listing.id %}" method="post">
+                {% csrf_token %}
+                <div class="form-group">
+                    <label for="amount">Bid AMOUNT:</label>
+                    <input type="number" step="100" name="amount" id="amount" class="form-control" required>
+                </div>
+                <button type="submit" class="btn btn-success">BID!</button>
+            </form>
+
+            <!-- Different Message like success or error -->
+            {% if message %}
+                <div class="alert {% if message_type == 'success' %}alert-success{% else %}alert-danger{% endif %}" role="alert">
+                    {{ message }}
+                </div>
+            {% endif %}
+        {% else %}
+                <p><strong>Winner:</strong> {{ listing.winner.username }} with bid of  ₹{{ listing.win_amount }}</p>
+        {% endif %}
+        
+        {% if user_is_winner %}
+                <div class="alert alert-success" role="alert">
+                    <p>Congratulations! You won this Auciton Item with ₹{{ listing.win_amount }}</p>
+                </div>
+        {% endif%}
+        
+        <!-- Close the auction -->
+        {% if user == listing.created_by and listing.is_active %}
+            <form action="{% url 'listing_detail' listing.id %}" method="post">
+                {% csrf_token %}
+                <button type="submit" name="close" class="btn btn-danger">Close Auction</button>
+            </form>
+        {% endif %}
+
+        
+    {% endif %}
+
+    <!-- Bid History  -->
+    <h4>Bid History:</h4>
+    {% if bids %}
+        <ul>
+            {% for bid in bids %}
+                <li>  <b>₹{{ bid.amount }}</b> by {{ bid.bidder.username }} on {{ bid.timestamp }}</li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+    {% if not bids %}
+        <p>No bids have been placed yet.</p>
+    {% endif %}
+
+    <!-- Comment Display + Insertion -->
+    <h4>Comments</h4>
+    {% if comments %}
+        <ul>
+            {% for comment in comments %}
+                <li><i>{{ comment.user.username }} on {{ comment.timestamp}}</i>
+                    <br>{{ comment.text }}
+                </li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p>No comments yet. Feel free to comment. </p>
+    {% endif %}
+    {% if user.is_authenticated %}
+    <form action="{% url 'listing_detail' listing.id %}" method="post">
+        {% csrf_token %}
+        <div class="form-group">
+            <label for="comment_text">Add a Comment:</label>
+            <textarea name="comment_text" id="comment_text" class="form-control" rows="3" required></textarea>
+        </div>
+            <button type="submit" name="comment" class="btn btn-primary">POST</button>
+    </form>
+    {% endif %}
+</div>
+{% endblock %}
