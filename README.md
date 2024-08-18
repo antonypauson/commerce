@@ -1,5 +1,10 @@
 # Commerce - Auction Site
 
+
+
+https://github.com/user-attachments/assets/bac37ac4-4f2e-434a-b619-4bac081654c5
+
+
 ## Overview
 Commerce is a web-based auction platform that allows users to create and participate in online auctions. Users can create listings for items they wish to sell, place bids on active listings, comment on listings, and manage a watchlist of items they are interested in..
 
@@ -10,6 +15,10 @@ Commerce is a web-based auction platform that allows users to create and partici
 - **Comments**: Users can add and view comments on each listing.
 - **Watchlist**: Users can add listings to their watchlist for easy access and management.
 - **Categories**: Browse listings by predefined categories.
+
+## Demo
+
+Watch the [video demo](https://youtu.be/P0c9BHUrrVA) on YouTube.
 
 
 ## Technologies Used
